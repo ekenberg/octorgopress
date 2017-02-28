@@ -42,7 +42,7 @@
   :menu-entry
   '(?o "Export to Octopress"
        ((?M "As MARKDOWN buffer" org-octopress-export-as-octopress)
-        (?m "As MARKDOWN file" org-octopress-publish-to-octopress)))
+        (?m "As MARKDOWN file" org-octopress-export-to-octopress)))
 )
 
 (defun org-octopress-template (contents info)
@@ -158,24 +158,21 @@ categories:
           "\n```\n"))
 
 (defun org-octopress-export-as-octopress
-  (&optional async subtreep visible-only body-only ext-plist)
+    (&optional async subtreep visible-only body-only ext-plist)
+  "Export current buffer to an octopress (markdown) buffer."
   (interactive)
-  (if async
-      (org-export-async-start
-          (lambda (output)
-            (with-current-buffer (get-buffer-create "*Org Octopress Export*")
-              (erase-buffer)
-              (insert output)
-              (goto-char (point-min))
-              (org-export-add-to-stack (current-buffer) 'octopress)))
-        `(org-export-as 'octopress ,subtreep ,visible-only ,body-only ',ext-plist))
-    (let ((outbuf (org-export-to-buffer 'octopress "*Org Octopress Export*"
-                    subtreep visible-only body-only ext-plist)))
-      (with-current-buffer outbuf (LaTeX-mode))
-      (when org-export-show-temporary-export-buffer
-        (switch-to-buffer-other-window outbuf)))))
+  (org-export-to-buffer 'octopress "*Org Octopress Export*"
+    async subtreep visible-only body-only ext-plist
+    (lambda () (set-auto-mode t))))
 
-(defun org-octopress-publish-to-octopress (plist filename pub-dir)
-  (org-publish-org-to 'octopress filename ".md" plist pub-dir))
+(defun org-octopress-export-to-octopress
+    (&optional async subtreep visible-only body-only ext-plist)
+  "Export current buffer to an octopress (markdown) file."
+  (interactive)
+  (let* ((extension ".md")
+         (file (org-export-output-file-name extension subtreep)))
+    (org-export-to-file 'octopress file
+      async subtreep visible-only body-only ext-plist)))
+
 
 ;;; octorgopress.el ends here
