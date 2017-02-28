@@ -43,33 +43,8 @@
     (code . org-octopress-verbatim)
     (inline-src-block . org-octopress-verbatim)
     (verbatim . org-octopress-verbatim)
-    (template . org-octopress-template)
     )
 )
-
-(defun org-octopress-template (contents info)
-  "Accepts the final transcoded string and a plist of export options,
-returns final string with YAML frontmatter as preamble"
-  (let ((title (plist-get info :title))
-        (sidebar (or (plist-get info :sidebar) ""))
-        (publish (or (plist-get info :publish) ""))
-        (date (or (car (plist-get info :date)) (format-time-string "%Y-%m-%d %R")))
-        (time "")
-        (frontmatter
-         "---
-layout: post
-title: %s
-date: %s %s
-comments: true
-published: %s
-sidebar: %s
-external-url:
-categories:
----
-"))
-    (if *org-octopress-yaml-front-matter*
-        (concat (format frontmatter title date time publish sidebar) contents)
-      contents)))
 
 (defun get-lang (lang)
   (and lang
@@ -126,34 +101,6 @@ categories:
 		   "`` %s ``")
 		  (t "``%s``"))
 	    value)))
-
-(defun is-empty (s)
-  (string= s ""))
-
-(defun drop-while (f list)
-  (cond ((null list) nil)
-        ((funcall f (car list)) (drop-while f (cdr list)))
-        (t list)))
-
-(defun take-while (f list)
-  (cond ((null list) nil)
-        ((funcall f (car list)) (cons (car list)
-                                      (take-while f (cdr list))))
-        (t nil)))
-
-(defun complement (f)
-  (lexical-let ((f f))
-    (lambda (&rest args)
-      (not (apply f args)))))
-
-(defun string-join (xs y)
-  (mapconcat #'identity xs y))
-
-(defun trim-empty-lines (s)
-  (let ((lines (split-string s "\n")))
-    (string-join
-     (reverse (drop-while #'is-empty
-                          (reverse (drop-while #'is-empty lines)))) "\n")))
 
 (defun org-octopress-export-as-octopress
     (&optional async subtreep visible-only body-only ext-plist)
