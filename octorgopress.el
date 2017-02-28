@@ -16,7 +16,7 @@
 
 ;;; Code:
 
-(require 'ox)
+(require 'ox-md)
 
 (defvar *org-octopress-yaml-front-matter* t)
 
@@ -28,30 +28,32 @@
   (mapcar #'octorg:normalize-lang
           '("SML" "ActionScript" "Ada" "ANTLR" "AppleScript" "Assembly" "Asymptote" "Awk" "Befunge" "Boo" "BrainFuck" "C" "C++" "C#" "Clojure" "CoffeeScript" "ColdFusion" "Common Lisp" "Coq" "Cython" "D" "Dart" "Delphi" "Dylan" "Erlang" "Factor" "Fancy" "Fortran" "F#" "Gherkin" "GL shaders" "Groovy" "Haskell" "IDL" "Io" "Java" "JavaScript" "LLVM" "Logtalk" "Lua" "Matlab" "MiniD" "Modelica" "Modula-2" "MuPad" "Nemerle" "Nimrod" "Objective-C" "Objective-J" "Octave" "OCaml" "PHP" "Perl" "PovRay" "PostScript" "PowerShell" "Prolog" "Python" "Rebol" "Redcode" "Ruby" "Rust" "S" "S-Plus" "R" "Scala" "Scheme" "Scilab" "Smalltalk" "SNOBOL" "Tcl" "Vala" "Verilog" "VHDL" "Visual Basic.NET" "Visual FoxPro" "XQuery")))
 
-(org-export-define-backend 'octopress
-  '(
-    (bold . org-octopress-bold)
-    (fixed-width . org-octopress-fixed-width)
-    (headline . org-octopress-headline)
-    (italic . org-octopress-italic)
-    (link . org-octopress-link)
-    (plain-list . org-octopress-plain-list)
-    (item . org-octopress-item)
-    (paragraph . org-octopress-paragraph)
-    (section . org-octopress-section)
-    (src-block . org-octopress-src-block)
-    (template . org-octopress-template))
+(org-export-define-derived-backend 'octopress 'md
   :menu-entry
   '(?o "Export to Octopress"
-       ((?M "As MARKDOWN buffer" org-octopress-export-as-octopress)
-        (?m "As MARKDOWN file" org-octopress-export-to-octopress)))
+       ((?O "As MARKDOWN buffer" org-octopress-export-as-octopress)
+        (?o "As MARKDOWN file" org-octopress-export-to-octopress)))
+  :options-alist '((:sidebar "SIDEBAR" nil nil t) (:publish "PUBLISH" nil "true" t) (:tags "TAGS" nil nil split)(:categories "CATEGORIES" nil nil split)(:title "TITLE" nil nil space) (:author "AUTHOR" nil user-full-name t) (:email "EMAIL" nil user-mail-address t) (:date "DATE" nil nil t))
+  :translate-alist
+  '(
+    (headline . org-octopress-headline)
+    (link . org-octopress-link)
+    (paragraph . org-octopress-paragraph)
+    (src-block . org-octopress-src-block)
+    (code . org-octopress-verbatim)
+    (inline-src-block . org-octopress-verbatim)
+    (verbatim . org-octopress-verbatim)
+    (template . org-octopress-template)
+    )
 )
 
 (defun org-octopress-template (contents info)
   "Accepts the final transcoded string and a plist of export options,
 returns final string with YAML frontmatter as preamble"
   (let ((title (plist-get info :title))
-        (date (car (plist-get info :date)))
+        (sidebar (or (plist-get info :sidebar) ""))
+        (publish (or (plist-get info :publish) ""))
+        (date (or (car (plist-get info :date)) (format-time-string "%Y-%m-%d %R")))
         (time "")
         (frontmatter
          "---
@@ -59,12 +61,14 @@ layout: post
 title: %s
 date: %s %s
 comments: true
+published: %s
+sidebar: %s
 external-url:
 categories:
 ---
 "))
     (if *org-octopress-yaml-front-matter*
-        (concat (format frontmatter title date time) contents)
+        (concat (format frontmatter title date time publish sidebar) contents)
       contents)))
 
 (defun get-lang (lang)
@@ -114,24 +118,14 @@ categories:
 (defun org-octopress-paragraph (paragraph contents info)
   contents)
 
-(defun org-octopress-section (section contents info)
-  contents)
-
-(defun org-octopress-italic (elt contents info)
-  "Transcode italic text to Octopress equiv of <em>"
-  (format "*%s*" contents))
-
-(defun org-octopress-bold (text contents info)
-  "Transcode bold text to Octopress equiv of <strong>"
-  (format "**%s**" contents))
-
-(defun org-octopress-plain-list (plain-list contents info)
-  "Format a plain-list into octopress (markdown)"
-  (format "%s" contents))
-
-(defun org-octopress-item (item contents info)
-  "Format a list item into octopress (markdown)"
-  (format "* %s" contents))
+(defun org-octopress-verbatim (verbatim contents info)
+  (let ((value (org-element-property :value verbatim)))
+    (format (cond ((not (string-match "`" value)) "`%s`")
+		  ((or (string-prefix-p "`" value)
+		       (string-suffix-p "`" value))
+		   "`` %s ``")
+		  (t "``%s``"))
+	    value)))
 
 (defun is-empty (s)
   (string= s ""))
@@ -160,12 +154,6 @@ categories:
     (string-join
      (reverse (drop-while #'is-empty
                           (reverse (drop-while #'is-empty lines)))) "\n")))
-
-(defun org-octopress-fixed-width (fixed-width contents info)
-  "Transcode fixed-width region to Octopress anonymous code block"
-  (concat "```\n"
-          (trim-empty-lines (org-element-property :value fixed-width))
-          "\n```\n"))
 
 (defun org-octopress-export-as-octopress
     (&optional async subtreep visible-only body-only ext-plist)
