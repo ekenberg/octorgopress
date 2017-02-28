@@ -35,6 +35,8 @@
     (headline . org-octopress-headline)
     (italic . org-octopress-italic)
     (link . org-octopress-link)
+    (plain-list . org-octopress-plain-list)
+    (item . org-octopress-item)
     (paragraph . org-octopress-paragraph)
     (section . org-octopress-section)
     (src-block . org-octopress-src-block)
@@ -122,6 +124,14 @@ categories:
 (defun org-octopress-bold (text contents info)
   "Transcode bold text to Octopress equiv of <strong>"
   (format "**%s**" contents))
+
+(defun org-octopress-plain-list (plain-list contents info)
+  "Format a plain-list into octopress (markdown)"
+  (format "%s" contents))
+
+(defun org-octopress-item (item contents info)
+  "Format a list item into octopress (markdown)"
+  (format "* %s" contents))
 
 (defun is-empty (s)
   (string= s ""))
