@@ -22,8 +22,14 @@ This is how I want it to work:
 *** TODO Have =rake generate/publish etc= not publish org-files
 *** DONE Put octopress-export in org-mode export menu
 *** DONE Remove =new_post= etc from octorgopress.el
-*** TODO Have export function force saving current document
-*** TODO Have export function figure out the new filename (.md)
-    check how twbs does it
-*** TODO Have export function save buffer to the new filename
-    check how twbs does it
+*** DONE Have export function figure out the new filename (.md)
+*** DONE Have export function save buffer to the new filename
+
+
+** Export details
+*** TODO Make complete test-file (org) with all supported export elements
+*** TODO fill =date:= field, never set =nil=
+*** TODO make == (or other?) produce inline code
+*** TODO prefer actual codeblock over ``` ? Title and such
+*** TODO Support [[http://orgmode.org/manual/Plain-lists.html][plain unordered lists]]
+*** TODO Support images (maybe check [[https://github.com/sleepomeno/octorgopress/commit/c0089459cff04d1122e48e403865df6149851ef6][this forked commit]])
