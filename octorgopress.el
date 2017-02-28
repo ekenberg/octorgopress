@@ -173,28 +173,4 @@ categories:
 (defun org-octopress-publish-to-octopress (plist filename pub-dir)
   (org-publish-org-to 'octopress filename ".md" plist pub-dir))
 
-(defun new-post (dir title)
-  "Create and visit a new .org file in dir named $date-$title.org, ie
-Octopress/Jekyll style"
-  (interactive "Mdirectory: \nMtitle: ")
-  (let* ((date (format-time-string "%Y-%m-%d"))
-         (title-no-spaces (replace-regexp-in-string " +" "-" title))
-         (dirname (file-name-as-directory dir))
-         (filename (format (concat dirname "%s-%s.org") date title-no-spaces)))
-    (find-file filename)
-    (rename-buffer title)
-    (org-insert-export-options-template)
-    (rename-buffer filename)))
-
-(defun make-org-publish-project-alist
-  (name blorg-root octopress-root)
-  (let ((octopress-posts (concat (file-name-as-directory octopress-root)
-                                 "source/_posts")))
-    `(("posts"
-       :base-directory ,blorg-root
-       :base-extension "org"
-       :publishing-directory ,octopress-posts
-       :publishing-function org-octopress-publish-to-octopress)
-      (,name :components ("posts")))))
-
 ;;; octorgopress.el ends here

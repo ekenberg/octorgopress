@@ -1,0 +1,29 @@
+#+OPTIONS: toc:nil num:nil html-postamble:nil
+
+
+* org-mode export
+
+This is how I want it to work:
+
+- Create new post as usual =rake new_post["Blog post title"]=
+  - This creates an org-file instead of markdown
+  - Edit the org-file
+
+- Run an export command via the usual menu =C-c C-e=
+  - org-file is converted to markdown and saved to same name and location with .md suffix
+  - optionally allow reviewing and editing the exported buffer before saving
+    - or just ask after saving "Edit the exported file? (y/n)"
+
+- Run =rake generate= as usual
+
+- Publish as usual
+
+*** TODO Have =rake new_post= create a good org-file
+*** TODO Have =rake generate/publish etc= not publish org-files
+*** TODO Put octopress-export in org-mode export menu
+*** DONE Remove =new_post= etc from octorgopress.el
+*** TODO Have export function force saving current document
+*** TODO Have export function figure out the new filename (.md)
+    check how twbs does it
+*** TODO Have export function save buffer to the new filename
+    check how twbs does it
