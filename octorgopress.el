@@ -38,7 +38,12 @@
     (paragraph . org-octopress-paragraph)
     (section . org-octopress-section)
     (src-block . org-octopress-src-block)
-    (template . org-octopress-template)))
+    (template . org-octopress-template))
+  :menu-entry
+  '(?o "Export to Octopress"
+       ((?M "As MARKDOWN buffer" org-octopress-export-as-octopress)
+        (?m "As MARKDOWN file" org-octopress-publish-to-octopress)))
+)
 
 (defun org-octopress-template (contents info)
   "Accepts the final transcoded string and a plist of export options,

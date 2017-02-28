@@ -20,7 +20,7 @@ This is how I want it to work:
 
 *** TODO Have =rake new_post= create a good org-file
 *** TODO Have =rake generate/publish etc= not publish org-files
-*** TODO Put octopress-export in org-mode export menu
+*** DONE Put octopress-export in org-mode export menu
 *** DONE Remove =new_post= etc from octorgopress.el
 *** TODO Have export function force saving current document
 *** TODO Have export function figure out the new filename (.md)
