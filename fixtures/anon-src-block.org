@@ -1,5 +1,0 @@
-#+begin_src
-int main() {
-   printf("Hello, World.\n");
-}
-#+end_src
