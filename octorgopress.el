@@ -24,7 +24,7 @@
 ;; pygments supports the following languages
 (defvar *org-octopress-pygments-langs*
   (mapcar #'octorg:normalize-lang
-          '("SML" "ActionScript" "Ada" "ANTLR" "AppleScript" "Assembly" "Asymptote" "Awk" "Befunge" "Boo" "BrainFuck" "C" "C++" "C#" "Clojure" "CoffeeScript" "ColdFusion" "Common Lisp" "Coq" "Cython" "D" "Dart" "Delphi" "Dylan" "Erlang" "Factor" "Fancy" "Fortran" "F#" "Gherkin" "GL shaders" "Groovy" "Haskell" "IDL" "Io" "Java" "JavaScript" "LLVM" "Logtalk" "Lua" "Matlab" "MiniD" "Modelica" "Modula-2" "MuPad" "Nemerle" "Nimrod" "Objective-C" "Objective-J" "Octave" "OCaml" "PHP" "Perl" "PovRay" "PostScript" "PowerShell" "Prolog" "Python" "Rebol" "Redcode" "Ruby" "Rust" "sh" "S" "S-Plus" "R" "Scala" "Scheme" "Scilab" "Smalltalk" "SNOBOL" "Tcl" "Vala" "Verilog" "VHDL" "Visual Basic.NET" "Visual FoxPro" "XQuery")))
+          '("SML" "ActionScript" "Ada" "ANTLR" "AppleScript" "Assembly" "Asymptote" "Awk" "Befunge" "Boo" "BrainFuck" "C" "C++" "C#" "Clojure" "CoffeeScript" "ColdFusion" "Common Lisp" "Coq" "Cython" "D" "Dart" "Delphi" "Dylan" "Erlang" "Factor" "Fancy" "Fortran" "F#" "Gherkin" "GL shaders" "Groovy" "Haskell" "IDL" "Io" "Java" "JavaScript" "LLVM" "Logtalk" "Lua" "Matlab" "MiniD" "Modelica" "Modula-2" "MuPad" "Nemerle" "Nimrod" "Objective-C" "Objective-J" "Octave" "OCaml" "PHP" "Perl" "PovRay" "PostScript" "PowerShell" "Prolog" "Python" "Rebol" "Redcode" "Ruby" "Rust" "sh" "S" "S-Plus" "R" "Scala" "Scheme" "Scilab" "Smalltalk" "SNOBOL" "Tcl" "Text" "Vala" "Verilog" "VHDL" "Visual Basic.NET" "Visual FoxPro" "XQuery")))
 
 (org-export-define-derived-backend 'octopress 'md
   :menu-entry
@@ -51,19 +51,34 @@
                ((not (member lang *org-octopress-pygments-langs*)) nil)
                (t lang)))))
 
+(defun org-octopress-plain-text-block (input-block contents info)
+  "Transcode a #+begin_verse or src-code lang:text block"
+  (setq contents (replace-regexp-in-string
+                  "\t$" "" (replace-regexp-in-string
+                            "^" "\t" contents)))
+  (format "{:lang='text'}\n%s{:endlang}\n" contents)
+  )
+
 (defun org-octopress-src-block (src-block contents info)
   "Transcode a #+begin_src block from Org to Github style backtick code blocks"
   (let* ((lang (get-lang (org-element-property :language src-block)))
-         (value (org-element-property :value src-block))
-         (name (org-element-property :name src-block))
-         (header
-          ;; backtick code blocks support lang or lang and name, but not name alone
-          (cond ((and lang name)
-                 (concat "``` " lang " " name "\n"))
-                (lang
-                 (concat "``` " lang "\n"))
-                (t "{% codeblock %}\n")))
-         (footer (if lang "```\n" "{% endcodeblock %}\n")))
+    (value (org-element-property :value src-block))
+    (name (org-element-property :name src-block))
+    (header
+     ;; backtick code blocks support lang or lang and name, but not name alone
+     (cond ((and lang name)
+            (concat "``` " lang " " name "\n"))
+           (lang
+            (concat "``` " lang "\n"))
+           (t "{% codeblock %}\n")))
+    (footer (if lang "```\n" "{% endcodeblock %}\n")))
+    (if (string-equal lang "text")
+        (org-octopress-plain-text-block src-block value info)
+      (concat
+       header
+       value
+       footer
+       contents))))
     (concat
      header
      value
