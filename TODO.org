@@ -18,8 +18,8 @@ This is how I want it to work:
 
 - Publish as usual
 
-*** TODO Have =rake new_post= create a good org-file
-*** TODO Have =rake generate/publish etc= not publish org-files
+*** DONE Have =rake new_post= create a good org-file
+*** DONE Have =rake generate/publish etc= not publish org-files
 *** DONE Put octopress-export in org-mode export menu
 *** DONE Remove =new_post= etc from octorgopress.el
 *** DONE Have export function figure out the new filename (.md)
@@ -30,6 +30,6 @@ This is how I want it to work:
 *** TODO Make complete test-file (org) with all supported export elements
 *** DONE fill =date:= field, never set =nil=
 *** DONE make == (or other?) produce inline code
-*** TODO prefer actual codeblock over ``` ? Title and such
+*** DONE prefer actual codeblock over ``` ? Title and such
 *** DONE Support [[http://orgmode.org/manual/Plain-lists.html][plain unordered lists]]
 *** TODO Support images (maybe check [[https://github.com/sleepomeno/octorgopress/commit/c0089459cff04d1122e48e403865df6149851ef6][this forked commit]])
