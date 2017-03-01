@@ -81,7 +81,7 @@
     (concat (apply 'concat (repeat "#" level))
             " "
             value
-            "\n"
+            "\n\n"
             contents)))
 
 (defun org-octopress-link (link contents info)
