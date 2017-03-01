@@ -1,0 +1,7 @@
+#+OPTIONS: toc:nil num:nil
+
+* octorgopress
+
+A fork from [[https://github.com/spacemanaki/octorgopress][here]]
+
+Ended up making quite a lot of changes, now deriving from [[https://github.com/emacsmirror/org/blob/master/lisp/ox-md.el][ox-md]] it is almost a complete rewrite.
