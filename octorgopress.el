@@ -38,6 +38,8 @@
     (link . org-octopress-link)
     (paragraph . org-octopress-paragraph)
     (src-block . org-octopress-src-block)
+    (quote-block . org-octopress-quote-block)
+    (verse-block . org-octopress-plain-text-block)
     (code . org-octopress-verbatim)
     (inline-src-block . org-octopress-verbatim)
     (verbatim . org-octopress-verbatim)
@@ -79,11 +81,18 @@
        value
        footer
        contents))))
+
+
+(defun org-octopress-quote-block (quote-block contents info)
+  "Transcode a #+begin_quote block from Org to {% blockquote %}"
+  (let* ((name (or (org-element-property :name quote-block) "bogus"))
+         (header (format "{%% blockquote %s %%}\n" name))
+         (footer "{% endblockquote %}\n")
+         )
     (concat
      header
-     value
-     footer
-     contents)))
+     contents
+     footer)))
 
 (defun repeat (x n)
   (let (acc)
