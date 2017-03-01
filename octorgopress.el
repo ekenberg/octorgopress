@@ -55,6 +55,7 @@
 
 (defun org-octopress-plain-text-block (input-block contents info)
   "Transcode a #+begin_verse or src-code lang:text block"
+  ;; start each line with <tab> (except end-block) for the markdown conversion
   (setq contents (replace-regexp-in-string
                   "\t$" "" (replace-regexp-in-string
                             "^" "\t" contents)))
